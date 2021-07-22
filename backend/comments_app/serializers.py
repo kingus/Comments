@@ -3,9 +3,8 @@ from rest_framework import serializers
 
 
 class CommentSerializer(serializers.Serializer):
-    comment_id = serializers.CharField(max_length=20)
     comment = serializers.CharField(default="")
-    article = serializers.CharField(default="")
+    title = serializers.CharField(default="")
     thumbs_up = serializers.IntegerField(default=0)
     thumbs_down = serializers.IntegerField(default=0)
 

@@ -28,3 +28,17 @@ class CommentView(APIView):
         serializer = CommentSerializer(comments, many=True)
 
         return Response({"comments": serializer.data})
+
+    def put(self, request):
+        comments = request.data.get('comments')
+        comments_list = list()
+
+        for comment in comments:
+            print(comment)
+            serializer = CommentSerializer(data=comment)
+
+            if serializer.is_valid(raise_exception=True):
+                comment_saved = serializer.save()
+                comments_list.append(comment)
+
+        return Response({"comments_list": comments_list})

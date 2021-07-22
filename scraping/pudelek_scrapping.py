@@ -6,10 +6,14 @@ import json
 import re
 from Article import Article
 from Comment import Comment
+from datetime import datetime
 
 
 def get_pudelek_articles():
     pudelek_articles = list()
+    comments_list = list()
+    now = datetime.now()
+
     url = "https://www.pudelek.pl/"
     result = requests.get(url)
 
@@ -23,7 +27,7 @@ def get_pudelek_articles():
         articleUrl = "https://pudelek.pl" + div.find('a')['href']
         title = div.find('a')['title']
 
-        article = Article(title, articleUrl)
+        article = Article(title, articleUrl, now)
         pudelek_articles.append(article)
 
     for article in pudelek_articles:
@@ -60,10 +64,30 @@ def get_pudelek_articles():
             comment_item = Comment(
                 article.title, comment, up_counter, down_counter)
             comment_item.print_comment()
+            comments_list.append(comment_item)
+    return comments_list
+
+
+def save_comments(api_url, comments_list):
+    payload = '{"comments": ['
+    for comment in comments_list:
+        json_string = json.dumps(comment.__dict__, sort_keys=True,
+                                 indent=2, ensure_ascii=True)
+        payload = payload + json_string + ","
+
+    payload = payload[:-1] + "]}"
+
+    headers = {'Content-Type': 'application/json'}
+
+    print(payload)
+    response = requests.request("PUT", api_url, headers=headers, data=payload)
+    print(response.status_code)
 
 
 def main():
-    get_pudelek_articles()
+    api_url = "http://127.0.0.1:8000/api/comment"
+    comments = get_pudelek_articles()
+    save_comments(api_url, comments)
 
 
 if __name__ == "__main__":

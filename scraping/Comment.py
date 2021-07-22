@@ -2,11 +2,11 @@ class Comment:
     def __init__(self, title, comment, up, down):
         self.title = title
         self.comment = comment
-        self.up = up
-        self.down = down
+        self.thumbs_up = up
+        self.thumbs_down = down
 
     def print_comment(self):
         print(self.title)
         print(self.comment)
-        print(self.up + " UP")
-        print(self.down + " DOWN")
+        print(self.thumbs_up + " UP")
+        print(self.thumbs_down + " DOWN")

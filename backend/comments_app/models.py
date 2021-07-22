@@ -2,11 +2,10 @@ from django.db import models
 
 
 class Comment(models.Model):
-    comment_id = models.TextField(default="", unique=True)
     comment = models.TextField(default="")
-    article = models.TextField(default="")
-    thumbs_up = models.IntegerField(default=0)
-    thumbs_down = models.IntegerField(default=0)
+    title = models.TextField(default="")
+    thumbs_up = models.TextField(default=0)
+    thumbs_down = models.TextField(default=0)
 
     # start_dttm = models.DateTimeField(
     #     default=timezone.now)
@@ -18,3 +17,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.comment
+
+
+class Article(models.Model):
+    title = models.TextField(default="")
+    url = models.TextField(default="")
+    date = models.TextField(default="")
