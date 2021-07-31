@@ -1,3 +1,4 @@
+import csv
 import requests
 from bs4 import BeautifulSoup
 import os
@@ -7,9 +8,12 @@ import re
 from Article import Article
 from Comment import Comment
 from datetime import datetime
+from selenium import webdriver
+from bs4 import BeautifulSoup
 
 
 def get_pudelek_articles():
+
     pudelek_articles = list()
     comments_list = list()
     now = datetime.now()
@@ -18,13 +22,25 @@ def get_pudelek_articles():
     result = requests.get(url)
 
     res = result.content
+
+    # browser = webdriver.Firefox()
+    # browser.get(url)
+    # button = browser.find_elements_by_class_name(
+    #     'sc-1llysyr-0 dXjljb').click()
+
+    # soup = BeautifulSoup(browser.page_source)
+
     soup = BeautifulSoup(res, "html.parser")
     mydivs = soup.findAll(
         "div", {"data-st-area": re.compile("main-stream-[0-9]*")})
+    # mydivs = soup.findAll(
+    #     "div", {"class": "d101d7-0 hSKGxm"})
 
     for div in mydivs:
 
         articleUrl = "https://pudelek.pl" + div.find('a')['href']
+        print(articleUrl)
+
         title = div.find('a')['title']
 
         article = Article(title, articleUrl, now)
@@ -36,7 +52,7 @@ def get_pudelek_articles():
         res = result.content
         soup = BeautifulSoup(res, "html.parser")
         mydivs = soup.findAll(
-            "div", {"class": re.compile("kvmdow.*")})
+            "div", {"class": re.compile(".*sc-7hqr3i-0 f5f5sk-1")})
 
         for div in mydivs:
 
@@ -64,8 +80,26 @@ def get_pudelek_articles():
             comment_item = Comment(
                 article.title, comment, up_counter, down_counter)
             comment_item.print_comment()
+
+            is_positive = input('IS POSITIVE: ')
+
+            data = [article.title, comment,
+                    is_positive, up_counter, down_counter]
+
+            write_file(data)
+
             comments_list.append(comment_item)
     return comments_list
+
+
+def write_file(row):
+    f = open('/home/kingus/komentarze.csv', 'a', encoding='UTF8', newline='')
+
+    writer = csv.writer(f)
+
+    writer.writerow(row)
+
+    f.close()
 
 
 def save_comments(api_url, comments_list):
